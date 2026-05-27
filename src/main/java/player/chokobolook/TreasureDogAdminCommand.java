@@ -27,8 +27,8 @@ public final class TreasureDogAdminCommand implements CommandExecutor, TabComple
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            lootTableManager.createDefaultTables();
-            sender.sendMessage("Treasure dog loot tables are ready. Edited JSON loot is applied automatically.");
+            lootTableManager.reload();
+            sender.sendMessage("Treasure dog config has been reloaded.");
             return true;
         }
 

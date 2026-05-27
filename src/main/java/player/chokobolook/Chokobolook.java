@@ -10,7 +10,7 @@ public final class Chokobolook extends JavaPlugin {
     public void onEnable() {
         LootTableManager lootTableManager = new LootTableManager(this);
         TreasureDogService dogService = new TreasureDogService(this);
-        lootTableManager.createDefaultTables();
+        lootTableManager.reload();
         TreasureDogAdminCommand adminCommand = new TreasureDogAdminCommand(lootTableManager, dogService);
         Objects.requireNonNull(getCommand("chokobolook")).setExecutor(adminCommand);
         Objects.requireNonNull(getCommand("chokobolook")).setTabCompleter(adminCommand);

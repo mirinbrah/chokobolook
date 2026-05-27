@@ -1,144 +1,99 @@
 package player.chokobolook;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
 
 public final class LootTableManager {
-    private static final double DEFAULT_NOTHING_CHANCE = 0.20;
-    private static final List<String> DEFAULT_TABLES = List.of(
-            "overworld.json",
-            "the_end.json",
-            "nether.json",
-            "nether_wastes.json",
-            "crimson_forest.json",
-            "warped_forest.json",
-            "soul_sand_valley.json",
-            "basalt_deltas.json"
-    );
+    private static final double DEFAULT_FIND_CHANCE = 0.60;
 
     private final Chokobolook plugin;
-    private final Path lootDirectory;
+    private double findChance;
+    private List<LootEntry> entries = List.of();
 
     public LootTableManager(Chokobolook plugin) {
         this.plugin = plugin;
-        this.lootDirectory = plugin.getDataFolder().toPath().resolve("loot");
     }
 
-    public void createDefaultTables() {
-        try {
-            Files.createDirectories(lootDirectory);
-            for (String table : DEFAULT_TABLES) {
-                copyTableIfMissing(table);
-            }
-            for (OverworldLootCategory category : OverworldLootCategory.values()) {
-                copyTableIfMissing(category.tableName());
-            }
-        } catch (IOException exception) {
-            plugin.getLogger().log(Level.SEVERE, "Could not create default loot tables.", exception);
-        }
+    public void reload() {
+        plugin.saveDefaultConfig();
+        plugin.reloadConfig();
+
+        FileConfiguration config = plugin.getConfig();
+        findChance = Math.clamp(config.getDouble("find-chance", DEFAULT_FIND_CHANCE), 0, 1);
+        entries = readEntries(config.getMapList("loot"));
     }
 
-    public ItemStack roll(Biome biome, World.Environment environment) {
-        JsonObject table = loadTable(tablePath(biome, environment));
-        if (table == null || rollNothing(table)) {
+    public ItemStack roll() {
+        if (!foundTreasure() || entries.isEmpty()) {
             return null;
         }
-
-        List<LootEntry> entries = readLootEntries(table);
-        LootEntry entry = selectWeightedEntry(entries);
-        if (entry == null) {
-            return null;
-        }
+        LootEntry entry = entries.get(ThreadLocalRandom.current().nextInt(entries.size()));
         return createItem(entry);
     }
 
-    private boolean rollNothing(JsonObject table) {
-        double chance = doubleValueOrDefault(table, "nothingChance", DEFAULT_NOTHING_CHANCE);
-        return ThreadLocalRandom.current().nextDouble() < Math.clamp(chance, 0, 1);
+    private boolean foundTreasure() {
+        return ThreadLocalRandom.current().nextDouble() < findChance;
     }
 
-    private List<LootEntry> readLootEntries(JsonObject table) {
-        List<LootEntry> entries = new ArrayList<>();
-        for (JsonElement item : table.getAsJsonArray("items")) {
-            LootEntry entry = readLootEntry(item.getAsJsonObject());
+    private List<LootEntry> readEntries(List<Map<?, ?>> definitions) {
+        List<LootEntry> loaded = new ArrayList<>();
+        for (Map<?, ?> definition : definitions) {
+            LootEntry entry = readEntry(definition);
             if (entry != null) {
-                entries.add(entry);
+                loaded.add(entry);
             }
         }
-        return entries;
+        return List.copyOf(loaded);
     }
 
-    private LootEntry readLootEntry(JsonObject definition) {
-        Material material = Material.matchMaterial(definition.get("material").getAsString());
-        int weight = intValueOrDefault(definition, "weight", 1);
-        return material != null && weight > 0
-                ? new LootEntry(material, definition, weight)
-                : null;
-    }
-
-    private LootEntry selectWeightedEntry(List<LootEntry> entries) {
-        if (entries.isEmpty()) {
+    private LootEntry readEntry(Map<?, ?> definition) {
+        Material material = Material.matchMaterial(stringValue(definition, "material"));
+        if (material == null) {
+            plugin.getLogger().warning("Ignoring unknown loot material: " + definition.get("material"));
             return null;
         }
 
-        int totalWeight = entries.stream().mapToInt(LootEntry::weight).sum();
-        int choice = ThreadLocalRandom.current().nextInt(totalWeight);
-        for (LootEntry entry : entries) {
-            choice -= entry.weight();
-            if (choice < 0) {
-                return entry;
-            }
+        int minAmount = Math.max(1, intValue(definition, "min-amount", 1));
+        int maxAmount = Math.max(minAmount, intValue(definition, "max-amount", minAmount));
+        return new LootEntry(material, minAmount, maxAmount, readEnchantments(definition));
+    }
+
+    private Map<String, Integer> readEnchantments(Map<?, ?> definition) {
+        Object value = definition.get("enchantments");
+        if (!(value instanceof Map<?, ?> enchantments)) {
+            return Map.of();
         }
-        return null;
+
+        Map<String, Integer> loaded = new HashMap<>();
+        enchantments.forEach((name, level) -> loaded.put(
+                String.valueOf(name),
+                level instanceof Number number ? number.intValue() : 1
+        ));
+        return Map.copyOf(loaded);
     }
 
     private ItemStack createItem(LootEntry entry) {
-        ItemStack item = new ItemStack(entry.material(), randomAmount(entry.definition()));
-        applyEnchantments(item, entry.definition());
+        ItemStack item = new ItemStack(entry.material(), entry.randomAmount());
+        applyEnchantments(item, entry.enchantments());
         return item;
     }
 
-    private int randomAmount(JsonObject definition) {
-        int min = Math.max(1, intValueOrDefault(definition, "minAmount", 1));
-        int max = Math.max(min, intValueOrDefault(definition, "maxAmount", min));
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
-
-    private void applyEnchantments(ItemStack item, JsonObject definition) {
-        if (!definition.has("enchantments")) {
-            return;
-        }
-
+    private void applyEnchantments(ItemStack item, Map<String, Integer> enchantments) {
         ItemMeta meta = item.getItemMeta();
-        for (Map.Entry<String, JsonElement> enchantmentEntry
-                : definition.getAsJsonObject("enchantments").entrySet()) {
-            Enchantment enchantment = findEnchantment(enchantmentEntry.getKey());
-            if (enchantment != null) {
-                addEnchantment(meta, enchantment, enchantmentEntry.getValue().getAsInt());
-            }
-        }
+        enchantments.forEach((name, level) -> addEnchantment(meta, findEnchantment(name), level));
         item.setItemMeta(meta);
     }
 
@@ -148,6 +103,9 @@ public final class LootTableManager {
     }
 
     private void addEnchantment(ItemMeta meta, Enchantment enchantment, int level) {
+        if (enchantment == null) {
+            return;
+        }
         if (meta instanceof EnchantmentStorageMeta bookMeta) {
             bookMeta.addStoredEnchant(enchantment, level, true);
             return;
@@ -155,52 +113,24 @@ public final class LootTableManager {
         meta.addEnchant(enchantment, level, true);
     }
 
-    private Path tablePath(Biome biome, World.Environment environment) {
-        String biomeName = biome.getKey().getKey() + ".json";
-        Path biomeTable = lootDirectory.resolve(biomeName);
-        if (Files.exists(biomeTable)) {
-            return biomeTable;
-        }
-        if (environment == World.Environment.NORMAL) {
-            return lootDirectory.resolve(OverworldLootCategory.tableFor(biome.getKey().getKey()));
-        }
-        return lootDirectory.resolve(switch (environment) {
-            case NETHER -> "nether.json";
-            case THE_END -> "the_end.json";
-            default -> "overworld.json";
-        });
+    private String stringValue(Map<?, ?> values, String key) {
+        Object value = values.get(key);
+        return value == null ? "" : String.valueOf(value);
     }
 
-    private JsonObject loadTable(Path path) {
-        try {
-            return JsonParser.parseString(Files.readString(path, StandardCharsets.UTF_8)).getAsJsonObject();
-        } catch (IOException | RuntimeException exception) {
-            plugin.getLogger().log(Level.WARNING, "Could not read loot table " + path + ".", exception);
-            return null;
+    private int intValue(Map<?, ?> values, String key, int defaultValue) {
+        Object value = values.get(key);
+        return value instanceof Number number ? number.intValue() : defaultValue;
+    }
+
+    private record LootEntry(
+            Material material,
+            int minAmount,
+            int maxAmount,
+            Map<String, Integer> enchantments
+    ) {
+        private int randomAmount() {
+            return ThreadLocalRandom.current().nextInt(minAmount, maxAmount + 1);
         }
-    }
-
-    private void copyTableIfMissing(String name) throws IOException {
-        Path table = lootDirectory.resolve(name);
-        if (Files.exists(table)) {
-            return;
-        }
-        try (InputStream resource = plugin.getResource("loot/" + name)) {
-            if (resource == null) {
-                throw new IOException("Missing bundled loot resource loot/" + name);
-            }
-            Files.copy(resource, table);
-        }
-    }
-
-    private static int intValueOrDefault(JsonObject object, String property, int defaultValue) {
-        return object.has(property) ? object.get(property).getAsInt() : defaultValue;
-    }
-
-    private static double doubleValueOrDefault(JsonObject object, String property, double defaultValue) {
-        return object.has(property) ? object.get(property).getAsDouble() : defaultValue;
-    }
-
-    private record LootEntry(Material material, JsonObject definition, int weight) {
     }
 }

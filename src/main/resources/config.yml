@@ -1,0 +1,54 @@
+# Probability that the Treasure Dog finds one item from the list below.
+# 0.60 means 60% find treasure and 40% find nothing.
+find-chance: 0.60
+
+# Every entry has the same chance after treasure was found.
+loot:
+  - material: NETHERITE_INGOT
+    min-amount: 1
+    max-amount: 2
+
+  - material: DIAMOND_BLOCK
+    min-amount: 1
+    max-amount: 1
+
+  - material: MACE
+    min-amount: 1
+    max-amount: 1
+    enchantments:
+      density: 5
+      unbreaking: 3
+
+  - material: ENCHANTED_BOOK
+    min-amount: 1
+    max-amount: 1
+    enchantments:
+      mending: 1
+
+  - material: ENDER_PEARL
+    min-amount: 3
+    max-amount: 10
+
+  - material: BLAZE_SPAWN_EGG
+    min-amount: 1
+    max-amount: 1
+
+  - material: SPAWNER
+    min-amount: 1
+    max-amount: 1
+
+  - material: DIAMOND_CHESTPLATE
+    min-amount: 1
+    max-amount: 1
+    enchantments:
+      protection: 4
+      unbreaking: 3
+      mending: 1
+
+  - material: NETHERITE_BOOTS
+    min-amount: 1
+    max-amount: 1
+    enchantments:
+      protection: 4
+      feather_falling: 4
+      mending: 1

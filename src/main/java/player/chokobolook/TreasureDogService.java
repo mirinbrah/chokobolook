@@ -23,7 +23,7 @@ public final class TreasureDogService {
         wolf.setCollarColor(DyeColor.ORANGE);
         wolf.setCustomName("Treasure Dog");
         wolf.setCustomNameVisible(true);
-        wolf.setInvulnerable(true);
+        wolf.setInvulnerable(false);
         wolf.getPersistentDataContainer().set(treasureDogKey, PersistentDataType.BYTE, TREASURE_DOG_MARKER);
         return wolf;
     }

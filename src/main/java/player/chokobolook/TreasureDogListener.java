@@ -152,7 +152,7 @@ public final class TreasureDogListener implements Listener {
     }
 
     private void revealTreasure(Wolf wolf, Player owner, Location target) {
-        ItemStack treasure = lootTableManager.roll(target.getBlock().getBiome(), target.getWorld().getEnvironment());
+        ItemStack treasure = lootTableManager.roll();
         if (treasure == null) {
             revealEmptyDig(owner, target);
         } else {
