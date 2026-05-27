@@ -2,6 +2,7 @@ package player.chokobolook;
 
 import org.bukkit.DyeColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
@@ -31,5 +32,25 @@ public final class TreasureDogService {
     public boolean isTreasureDog(Wolf wolf) {
         Byte marker = wolf.getPersistentDataContainer().get(treasureDogKey, PersistentDataType.BYTE);
         return marker != null && marker == TREASURE_DOG_MARKER;
+    }
+
+    public int removeFor(Player owner) {
+        int removed = 0;
+        for (Wolf wolf : owner.getServer().getWorlds().stream()
+                .flatMap(world -> world.getEntitiesByClass(Wolf.class).stream())
+                .toList()) {
+            if (isTreasureDogOf(wolf, owner)) {
+                wolf.remove();
+                removed++;
+            }
+        }
+        return removed;
+    }
+
+    private boolean isTreasureDogOf(Wolf wolf, Player owner) {
+        OfflinePlayer wolfOwner = (OfflinePlayer) wolf.getOwner();
+        return isTreasureDog(wolf)
+                && wolfOwner != null
+                && wolfOwner.getUniqueId().equals(owner.getUniqueId());
     }
 }

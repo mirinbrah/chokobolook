@@ -62,7 +62,9 @@ public final class TreasureDogListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDogDamaged(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Wolf wolf && dogService.isTreasureDog(wolf)) {
+        if (event.getEntity() instanceof Wolf wolf
+                && dogService.isTreasureDog(wolf)
+                && event.getCause() != EntityDamageEvent.DamageCause.KILL) {
             event.setCancelled(true);
         }
     }

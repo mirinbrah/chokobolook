@@ -36,7 +36,23 @@ public final class TreasureDogAdminCommand implements CommandExecutor, TabComple
             return summonDog(sender, args);
         }
 
-        sender.sendMessage("Usage: /" + label + " <reload|summon> [player]");
+        if (args.length >= 1 && args[0].equalsIgnoreCase("remove")) {
+            return removeDogs(sender, args);
+        }
+
+        sender.sendMessage("Usage: /" + label + " <reload|summon|remove> [player]");
+        return true;
+    }
+
+    private boolean removeDogs(CommandSender sender, String[] args) {
+        Player owner = targetPlayer(sender, args);
+        if (owner == null) {
+            sender.sendMessage("Usage: /chokobolook remove <player>");
+            return true;
+        }
+
+        int removed = dogService.removeFor(owner);
+        sender.sendMessage("Removed " + removed + " Treasure Dog(s) owned by " + owner.getName() + ".");
         return true;
     }
 
@@ -71,11 +87,12 @@ public final class TreasureDogAdminCommand implements CommandExecutor, TabComple
             return List.of();
         }
         if (args.length == 1) {
-            return List.of("reload", "summon").stream()
+            return List.of("reload", "summon", "remove").stream()
                     .filter(option -> option.startsWith(args[0].toLowerCase()))
                     .toList();
         }
-        if (args.length == 2 && args[0].equalsIgnoreCase("summon")) {
+        if (args.length == 2
+                && (args[0].equalsIgnoreCase("summon") || args[0].equalsIgnoreCase("remove"))) {
             return sender.getServer().getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))

@@ -8,7 +8,7 @@ load: POSTWORLD
 commands:
   chokobolook:
     description: Admin commands for the treasure dog minigame
-    usage: /chokobolook <reload|summon> [player]
+    usage: /chokobolook <reload|summon|remove> [player]
     permission: chokobolook.admin
 
 permissions:
