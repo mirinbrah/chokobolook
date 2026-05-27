@@ -1,0 +1,11 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "DIAMOND", "minAmount": 2, "maxAmount": 5, "weight": 15 },
+    { "material": "BLUE_ICE", "minAmount": 4, "maxAmount": 16, "weight": 22 },
+    { "material": "ENCHANTED_BOOK", "minAmount": 1, "maxAmount": 1, "weight": 8, "enchantments": { "frost_walker": 2 } },
+    { "material": "POWDER_SNOW_BUCKET", "minAmount": 1, "maxAmount": 2, "weight": 13 },
+    { "material": "POLAR_BEAR_SPAWN_EGG", "minAmount": 1, "maxAmount": 1, "weight": 4 },
+    { "material": "DIAMOND_BOOTS", "minAmount": 1, "maxAmount": 1, "weight": 8, "enchantments": { "protection": 4, "feather_falling": 4 } }
+  ]
+}

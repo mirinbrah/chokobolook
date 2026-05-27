@@ -1,0 +1,11 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "GOLD_INGOT", "minAmount": 4, "maxAmount": 14, "weight": 22 },
+    { "material": "DIAMOND", "minAmount": 1, "maxAmount": 4, "weight": 12 },
+    { "material": "EMERALD", "minAmount": 3, "maxAmount": 9, "weight": 14 },
+    { "material": "ENCHANTED_GOLDEN_APPLE", "minAmount": 1, "maxAmount": 1, "weight": 3 },
+    { "material": "CAMEL_SPAWN_EGG", "minAmount": 1, "maxAmount": 1, "weight": 5 },
+    { "material": "DIAMOND_HELMET", "minAmount": 1, "maxAmount": 1, "weight": 6, "enchantments": { "protection": 4, "mending": 1 } }
+  ]
+}

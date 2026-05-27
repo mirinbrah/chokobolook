@@ -1,0 +1,11 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "DIAMOND", "minAmount": 1, "maxAmount": 4, "weight": 12 },
+    { "material": "CHERRY_SAPLING", "minAmount": 2, "maxAmount": 8, "weight": 18 },
+    { "material": "PINK_PETALS", "minAmount": 8, "maxAmount": 24, "weight": 17 },
+    { "material": "ENCHANTED_BOOK", "minAmount": 1, "maxAmount": 1, "weight": 8, "enchantments": { "mending": 1 } },
+    { "material": "BEE_SPAWN_EGG", "minAmount": 1, "maxAmount": 1, "weight": 4 },
+    { "material": "DIAMOND_CHESTPLATE", "minAmount": 1, "maxAmount": 1, "weight": 5, "enchantments": { "protection": 4 } }
+  ]
+}

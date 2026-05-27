@@ -1,0 +1,14 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "NETHERITE_INGOT", "minAmount": 1, "maxAmount": 2, "weight": 14 },
+    { "material": "DIAMOND_BLOCK", "minAmount": 1, "maxAmount": 1, "weight": 8 },
+    { "material": "MACE", "minAmount": 1, "maxAmount": 1, "weight": 4, "enchantments": { "density": 5, "unbreaking": 3 } },
+    { "material": "ENCHANTED_BOOK", "minAmount": 1, "maxAmount": 1, "weight": 9, "enchantments": { "mending": 1 } },
+    { "material": "ENDER_PEARL", "minAmount": 3, "maxAmount": 10, "weight": 18 },
+    { "material": "BLAZE_SPAWN_EGG", "minAmount": 1, "maxAmount": 1, "weight": 8 },
+    { "material": "SPAWNER", "minAmount": 1, "maxAmount": 1, "weight": 4 },
+    { "material": "DIAMOND_CHESTPLATE", "minAmount": 1, "maxAmount": 1, "weight": 10, "enchantments": { "protection": 4, "unbreaking": 3, "mending": 1 } },
+    { "material": "NETHERITE_BOOTS", "minAmount": 1, "maxAmount": 1, "weight": 6, "enchantments": { "protection": 4, "feather_falling": 4, "mending": 1 } }
+  ]
+}

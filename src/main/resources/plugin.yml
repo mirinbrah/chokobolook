@@ -1,0 +1,17 @@
+name: chokobolook
+version: '${version}'
+
+main: player.chokobolook.Chokobolook
+api-version: '1.21.1'
+load: POSTWORLD
+
+commands:
+  chokobolook:
+    description: Admin commands for the treasure dog minigame
+    usage: /chokobolook <reload|summon> [player]
+    permission: chokobolook.admin
+
+permissions:
+  chokobolook.admin:
+    description: Allows administration of the treasure dog minigame
+    default: op

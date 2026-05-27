@@ -1,0 +1,11 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "DIAMOND", "minAmount": 1, "maxAmount": 3, "weight": 13 },
+    { "material": "EMERALD_BLOCK", "minAmount": 1, "maxAmount": 2, "weight": 10 },
+    { "material": "GOLDEN_CARROT", "minAmount": 4, "maxAmount": 12, "weight": 18 },
+    { "material": "ENCHANTED_BOOK", "minAmount": 1, "maxAmount": 1, "weight": 8, "enchantments": { "unbreaking": 3 } },
+    { "material": "ARMADILLO_SPAWN_EGG", "minAmount": 1, "maxAmount": 1, "weight": 5 },
+    { "material": "DIAMOND_LEGGINGS", "minAmount": 1, "maxAmount": 1, "weight": 5, "enchantments": { "protection": 4 } }
+  ]
+}

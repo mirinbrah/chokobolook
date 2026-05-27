@@ -1,0 +1,11 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "DIAMOND", "minAmount": 1, "maxAmount": 4, "weight": 12 },
+    { "material": "PRISMARINE_CRYSTALS", "minAmount": 8, "maxAmount": 24, "weight": 20 },
+    { "material": "HEART_OF_THE_SEA", "minAmount": 1, "maxAmount": 1, "weight": 5 },
+    { "material": "TRIDENT", "minAmount": 1, "maxAmount": 1, "weight": 4, "enchantments": { "loyalty": 3 } },
+    { "material": "TURTLE_EGG", "minAmount": 1, "maxAmount": 3, "weight": 9 },
+    { "material": "DIAMOND_HELMET", "minAmount": 1, "maxAmount": 1, "weight": 6, "enchantments": { "respiration": 3, "aqua_affinity": 1 } }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "nothingChance": 0.20,
+  "items": [
+    { "material": "ELYTRA", "minAmount": 1, "maxAmount": 1, "weight": 4, "enchantments": { "unbreaking": 3, "mending": 1 } },
+    { "material": "SHULKER_SHELL", "minAmount": 2, "maxAmount": 8, "weight": 16 },
+    { "material": "ENDER_PEARL", "minAmount": 4, "maxAmount": 16, "weight": 18 },
+    { "material": "DIAMOND_BLOCK", "minAmount": 1, "maxAmount": 2, "weight": 8 },
+    { "material": "DRAGON_BREATH", "minAmount": 2, "maxAmount": 6, "weight": 12 }
+  ]
+}
